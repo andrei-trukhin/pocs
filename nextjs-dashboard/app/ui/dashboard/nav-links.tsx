@@ -15,15 +15,9 @@ import {BoxesIcon, SendToBack} from "lucide-react";
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  // {
-  //   name: 'Invoices',
-  //   href: '/dashboard/invoices',
-  //   icon: DocumentDuplicateIcon,
-  // },
   { name: 'Unit-test Report', href: '/dashboard/unit-test', icon: BoxesIcon },
   { name: 'E2E Tests Report', href: '/dashboard/e2e-test', icon: SendToBack },
   { name: 'Lighthouse Report', href: '/dashboard/reports', icon: ArrowTrendingUpIcon },
-  // { name: 'Lighthouse Report 2.0', href: '/dashboard/lighthouse-report', icon: ArrowTrendingUpIcon },
 ];
 
 export default function NavLinks() {
