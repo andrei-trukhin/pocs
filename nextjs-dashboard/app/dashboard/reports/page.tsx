@@ -4,7 +4,7 @@ import LighthouseReportState from "@/app/ui/reports/lighthouse-report-state";
 export default async function Page() {
     return (
         <div className="w-full">
-            <LighthouseReport />
+            {/*<LighthouseReport />*/}
             <LighthouseReportState />
         </div>
     );

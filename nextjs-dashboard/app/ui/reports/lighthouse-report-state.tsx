@@ -8,40 +8,41 @@ import {Progress} from "@/app/ui/reports/progress";
 import {LoadingProgress} from "@/app/ui/reports/loading-progress";
 import {getStateContext, LighthouseReport, LighthouseReportState} from "@/app/ui/reports/_state/state";
 import {StatusDisplay} from "@/app/ui/reports/status-display";
-
-const stateContext = getStateContext();
-const reactContext = React.createContext(stateContext);
+import {LighthouseReportReactContext} from "@/app/ui/reports/_state/context";
 
 const LighthouseDashboardState = () => {
-    const context = useContext(reactContext);
+    console.log('[LighthouseReportState] LighthouseDashboardState render');
+    const context = useContext(LighthouseReportReactContext);
     // console.log('Context:', context);
 
     const [report, setReport] = useState<LighthouseReport | null>(null);
 
     const [loading, setLoading] = useState<boolean>(context.state.status === 'loading');
 
-    const onStateChange = (state: LighthouseReportState) => {
+    const onStateChange = () => {
         setLoading(context.state.status === 'loading');
         updateReports();
     }
-    context.subscribeToState(onStateChange);
+
+    useEffect(() => {
+        const unsubscribe = context.subscribeToState(onStateChange);
+        return () => {
+            unsubscribe();
+        };
+    }, [context]);
 
     const [progress, setProgress] = useState(context.progress);
     context.subscribeToProgress(setProgress);
 
     const updateReports = () => {
-        console.log('Setting report:', context.state.status);
-
-        if (context.state.status === 'idle') {
-            context.state.loadReport();
-        }
+        console.log('[LighthouseReportState] Setting report:', context.state.status);
 
         new Promise<LighthouseReport | null>(async (resolve) => {
             resolve(context.state.getReport());
         }).then(report => {
             setReport(report);
         }).catch(error => {
-            console.warn('Failed to fetch Lighthouse report:', error);
+            console.warn('[LighthouseReportState] Failed to fetch Lighthouse report:', error);
         });
     };
 
@@ -75,7 +76,7 @@ const LighthouseDashboardState = () => {
                     disabled={context.state.status === 'loading'}
                     className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
                 >
-                    <RefreshCcw className="w-5 h-5"/> Reload Report
+                    <RefreshCcw className={`w-5 h-5 ${context.state.status === 'loading' ? 'animate-pulse' : ''}`}/> Reload Report
                 </button>
                 <button
                     onClick={() => context.state.cancelReport()}

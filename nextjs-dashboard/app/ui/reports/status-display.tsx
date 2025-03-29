@@ -6,7 +6,7 @@ import {JSX} from "react";
 
 const statusStyles: Record<Status, string> = {
     idle: 'text-gray-500',
-    loading: 'text-blue-500 animate-spin',
+    loading: 'text-blue-500',
     loaded: 'text-green-600',
     cancelled: 'text-red-600',
     error: 'text-red-600',
@@ -14,7 +14,7 @@ const statusStyles: Record<Status, string> = {
 
 const statusIcons: Record<Status, JSX.Element> = {
     idle: <PauseCircle className="w-5 h-5" />,
-    loading: <Loader className="w-5 h-5" />,
+    loading: <Loader className="w-5 h-5 animate-spin" />,
     loaded: <CheckCircle className="w-5 h-5" />,
     cancelled: <XCircle className="w-5 h-5" />,
     error: <XCircle className="w-5 h-5" />,

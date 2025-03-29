@@ -9,18 +9,21 @@ import Link from "next/link";
 import {usePathname} from "next/navigation";
 import clsx from 'clsx';
 import {DocumentDuplicateIcon} from "@heroicons/react/16/solid";
+import {BoxesIcon, SendToBack} from "lucide-react";
 
 // Map of links to display in the side navigation.
 // Depending on the size of the application, this would be stored in a database.
 const links = [
   { name: 'Home', href: '/dashboard', icon: HomeIcon },
-  {
-    name: 'Invoices',
-    href: '/dashboard/invoices',
-    icon: DocumentDuplicateIcon,
-  },
-  { name: 'Customers', href: '/dashboard/customers', icon: UserGroupIcon },
-  { name: 'Reports', href: '/dashboard/reports', icon: ArrowTrendingUpIcon }
+  // {
+  //   name: 'Invoices',
+  //   href: '/dashboard/invoices',
+  //   icon: DocumentDuplicateIcon,
+  // },
+  { name: 'Unit-test Report', href: '/dashboard/unit-test', icon: BoxesIcon },
+  { name: 'E2E Tests Report', href: '/dashboard/e2e-test', icon: SendToBack },
+  { name: 'Lighthouse Report', href: '/dashboard/reports', icon: ArrowTrendingUpIcon },
+  // { name: 'Lighthouse Report 2.0', href: '/dashboard/lighthouse-report', icon: ArrowTrendingUpIcon },
 ];
 
 export default function NavLinks() {

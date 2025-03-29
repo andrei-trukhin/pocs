@@ -7,13 +7,7 @@ import {Skeleton} from "@/app/ui/reports/skeleton";
 import {Progress} from "@/app/ui/reports/progress";
 import {LoadingProgress} from "@/app/ui/reports/loading-progress";
 import {StatusDisplay} from "@/app/ui/reports/status-display";
-import {generateRandomReport, Status} from "@/app/ui/reports/_state/state";
-interface LighthouseReport {
-    performance: number;
-    accessibility: number;
-    'best practices': number;
-    seo: number;
-}
+import {generateRandomReport, LighthouseReport, Status} from "@/app/ui/reports/_state/state";
 
 const LighthouseDashboard = () => {
     const reportRef = useRef<LighthouseReport | null>(null);
@@ -34,7 +28,7 @@ const LighthouseDashboard = () => {
         setProgress(0);
         setStatus('loading');
         try {
-            const simulatingTimeout = 10000
+            const simulatingTimeout = 5000
             // Simulate progress
             const interval = setInterval(() => {
                 setProgress((prev) => {
@@ -92,7 +86,7 @@ const LighthouseDashboard = () => {
 
     return (
         <div className="p-6">
-            <h2 className="text-2xl font-bold mb-4">Lighthouse Report Dashboard (Without State Pattern)</h2>
+            <h2 className="text-2xl font-bold mb-4">Lighthouse Report Dashboard</h2>
             <div className="flex items-center gap-2 mb-4">
                 <StatusDisplay status={status}/>
             </div>

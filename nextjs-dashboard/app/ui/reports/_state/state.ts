@@ -1,9 +1,11 @@
+import {fetchLighthouseReport} from "@/app/ui/reports/_state/fetch-lighthouse-report";
 
 export interface LighthouseReport {
     performance: number;
     accessibility: number;
-    'best practices': number;
+    bestPractices: number;
     seo: number;
+    pwa?: number;
 }
 
 export type Status = 'loading' | 'loaded' | 'error' | 'cancelled' | 'idle';
@@ -22,18 +24,13 @@ export interface LighthouseReportState {
     readonly status: Status;
 }
 
-const generateRandomScore = () => Math.floor(Math.random() * 100);
-export const generateRandomReport = (): LighthouseReport => ({
-    performance: generateRandomScore(),
-    accessibility: generateRandomScore(),
-    'best practices': generateRandomScore(),
-    seo: generateRandomScore(),
-});
+
 
 export const getStateContext = () => new StateContext();
 
 export class StateContext {
     set state(state: LighthouseReportState) {
+        console.log('[StateContext] Setting state:', state.status);
         this._state = state;
         this._stateSubject?.(state);
     }
@@ -51,7 +48,13 @@ export class StateContext {
     private _progressSubject?: (progress: number) => void;
 
     subscribeToState(callback: (state: LighthouseReportState) => void) {
+        console.log('[StateContext] Subscribing to state changes');
         this._stateSubject = callback;
+
+        return () => {
+            console.log('[StateContext] Unsubscribing from state changes');
+            this._stateSubject = undefined; // Cleanup the subscription
+        };
     }
 
     subscribeToProgress(callback: (progress: number) => void) {
@@ -101,41 +104,37 @@ class LoadingState implements LighthouseReportState {
     constructor(private readonly context: StateContext) {
         this.context.notifyProgress(0);
 
-        this.report = new Promise<LighthouseReport | null>(async (resolve) => {
-            const simulationTimeout = 10000;
-            // Simulate progress
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                if (this.canceled) {
-                    clearInterval(interval);
-                    // reject('Report loading canceled');
-                    return null; // it's important to return null here, otherwise the context will be updated after the rejection
-                }
-                this.context.notifyProgress(progress);
-                if (progress >= 100) {
-                    clearInterval(interval);
-                }
-            }, simulationTimeout / 20);
+        // Simulate progress
+        const simulationTimeout = 4000;
+        this.simulateProgress(simulationTimeout);
 
-            // Simulating API fetch with mock data
-            await new Promise(resolve => setTimeout(resolve, simulationTimeout));
+        this.report = fetchLighthouseReport().then(report => {
             if (this.canceled) {
-                clearInterval(interval);
-                // reject('Report loading canceled');
-                return null; // it's important to return null here, otherwise the context will be updated after the rejection
+                return null;
             }
-
-            // Generate random report
-            const mockReport = generateRandomReport();
-            context.state = new LoadedState(context, mockReport);
-            resolve(mockReport);
-
+            this.context.state = new LoadedState(this.context, report);
+            return report;
         }).catch(error => {
             context.state = new InitialState(context);
             console.warn('Failed to fetch Lighthouse report:', error);
             return null;
         });
+    }
+
+    private simulateProgress(simulationTimeout: number) {
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 5;
+            if (this.canceled) {
+                clearInterval(interval);
+                // reject('Report loading canceled');
+                return null; // it's important to return null here, otherwise the context will be updated after the rejection
+            }
+            this.context.notifyProgress(progress);
+            if (progress >= 100) {
+                clearInterval(interval);
+            }
+        }, simulationTimeout / 20);
     }
 
     loadReport() {
