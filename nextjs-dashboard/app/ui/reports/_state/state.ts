@@ -108,14 +108,15 @@ class LoadingState implements LighthouseReportState {
         const simulationTimeout = 4000;
         this.simulateProgress(simulationTimeout);
 
-        this.report = fetchLighthouseReport().then(report => {
+        this.report = fetchLighthouseReport(simulationTimeout).then(report => {
             if (this.canceled) {
                 return null;
             }
             this.context.state = new LoadedState(this.context, report);
             return report;
         }).catch(error => {
-            context.state = new InitialState(context);
+            this.canceled = true;
+            context.state = new ErrorState(context);
             console.warn('Failed to fetch Lighthouse report:', error);
             return null;
         });
@@ -180,6 +181,29 @@ class CancelledState implements LighthouseReportState {
 
     get status(): Status {
         return 'cancelled';
+    }
+
+    constructor(private readonly context: StateContext) {
+        this.context.notifyProgress(0);
+    }
+
+    loadReport() {
+        this.context.state = new LoadingState(this.context);
+    }
+
+    async getReport(): Promise<null> {
+        return null
+    }
+
+    cancelReport() {
+        // do nothing
+    }
+}
+
+class ErrorState implements LighthouseReportState {
+
+    get status(): Status {
+        return 'error';
     }
 
     constructor(private readonly context: StateContext) {

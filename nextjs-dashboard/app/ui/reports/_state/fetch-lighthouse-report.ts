@@ -8,8 +8,28 @@ export const generateRandomReport = (): LighthouseReport => ({
     seo: generateRandomScore(),
 });
 
-export function fetchLighthouseReport(): Promise<LighthouseReport> {
-    return new Promise<LighthouseReport>(async (resolve) => {
+
+const simulateError = () => {
+    if (Math.random() > 0.5) {
+        console.log('[Fetch Lighthouse Report] Simulating error');
+        return new Error('Failed to fetch Lighthouse report');
+    }
+
+    return null;
+}
+
+
+export function fetchLighthouseReport(simulatingTimeout: number): Promise<LighthouseReport> {
+    return new Promise<LighthouseReport>(async (resolve, reject) => {
+        console.log('[Fetch Lighthouse Report] Simulating fetch Lighthouse report...');
+        await new Promise(resolve => setTimeout(resolve, simulatingTimeout));
+
+        console.log('[Fetch Lighthouse Report] Fetching Lighthouse report...');
+        const error = simulateError();
+        if (error) {
+            reject(error);
+            return;
+        }
         // Generate random report
         const mockReport = generateRandomReport();
         resolve(mockReport);
