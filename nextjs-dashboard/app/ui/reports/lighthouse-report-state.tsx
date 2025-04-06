@@ -6,7 +6,7 @@ import {Card, CardContent, CardHeader, CardTitle} from "@/app/ui/reports/cards";
 import {Skeleton} from "@/app/ui/reports/skeleton";
 import {Progress} from "@/app/ui/reports/progress";
 import {LoadingProgress} from "@/app/ui/reports/loading-progress";
-import {getStateContext, LighthouseReport, LighthouseReportState} from "@/app/ui/reports/_state/state";
+import {LighthouseReport} from "@/app/ui/reports/_state/state";
 import {StatusDisplay} from "@/app/ui/reports/status-display";
 import {LighthouseReportReactContext} from "@/app/ui/reports/_state/context";
 
